@@ -1,0 +1,194 @@
+#:import dp kivy.metrics.dp
+
+<Btn@Button>:
+    size_hint_y: None
+    height: dp(50)
+
+<Body@Label>:
+    text_size: self.width, None
+    size_hint_y: None
+    height: self.texture_size[1]
+    markup: True
+    font_name: "RobotoMono-Regular"
+    font_size: "13sp"
+
+ScreenManager:
+    Screen:
+        name: "lock"
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(20)
+            spacing: dp(12)
+            Label:
+                text: "X"
+                font_size: "48sp"
+                bold: True
+            Label:
+                text: app.lock_hint
+                text_size: self.width, None
+                halign: "center"
+                size_hint_y: None
+                height: self.texture_size[1] + dp(10)
+            TextInput:
+                id: pass_in
+                password: True
+                multiline: False
+                hint_text: "Passphrase"
+                size_hint_y: None
+                height: dp(48)
+                on_text_validate: app.unlock(self.text)
+            Btn:
+                text: "Unlock"
+                on_release: app.unlock(pass_in.text)
+            Widget:
+
+    Screen:
+        name: "home"
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(16)
+            spacing: dp(10)
+            Label:
+                text: "X"
+                font_size: "36sp"
+                bold: True
+                size_hint_y: None
+                height: dp(56)
+            Label:
+                text: app.active_text
+                halign: "center"
+                text_size: self.width, None
+                size_hint_y: None
+                height: dp(64)
+            Btn:
+                text: "Reformat active file with Qwen"
+                on_release: app.propose()
+            Btn:
+                text: "Undo last reformat"
+                on_release: app.undo()
+            Btn:
+                text: "Chat"
+                on_release: app.go("chat")
+            Btn:
+                text: "Memory (train X)"
+                on_release: app.go("memory")
+            Btn:
+                text: "Voice"
+                on_release: app.voice()
+            Btn:
+                text: "Termux / Qwen status"
+                on_release: app.check_status()
+            Btn:
+                text: "Copy Acode plugin token"
+                on_release: app.copy_token()
+            Label:
+                text: app.status_text
+                text_size: self.width, None
+                halign: "center"
+
+    Screen:
+        name: "review"
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(10)
+            spacing: dp(8)
+            Label:
+                text: app.review_title
+                size_hint_y: None
+                height: dp(40)
+                bold: True
+            ScrollView:
+                Body:
+                    text: app.diff_text
+            TextInput:
+                id: reason_in
+                hint_text: "If No: why? (optional - X learns from it)"
+                multiline: False
+                size_hint_y: None
+                height: dp(44)
+            BoxLayout:
+                size_hint_y: None
+                height: dp(56)
+                spacing: dp(10)
+                Btn:
+                    text: "Yes, apply"
+                    background_color: 0.2, 0.7, 0.4, 1
+                    on_release: app.decide(True)
+                Btn:
+                    text: "No"
+                    background_color: 0.8, 0.3, 0.3, 1
+                    on_release: app.decide(False)
+
+    Screen:
+        name: "chat"
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(10)
+            spacing: dp(8)
+            ScrollView:
+                Body:
+                    text: app.chat_text
+            BoxLayout:
+                size_hint_y: None
+                height: dp(48)
+                spacing: dp(6)
+                TextInput:
+                    id: chat_in
+                    multiline: False
+                    hint_text: "Ask X..."
+                    on_text_validate: app.send(self.text)
+                Btn:
+                    text: "Send"
+                    size_hint_x: None
+                    width: dp(80)
+                    on_release: app.send(chat_in.text)
+            Btn:
+                text: "Back"
+                on_release: app.go("home")
+
+    Screen:
+        name: "memory"
+        BoxLayout:
+            orientation: "vertical"
+            padding: dp(10)
+            spacing: dp(8)
+            Label:
+                text: "Memory (encrypted)"
+                bold: True
+                size_hint_y: None
+                height: dp(32)
+            TextInput:
+                id: note_in
+                hint_text: "Teach X: a style rule or a note..."
+                size_hint_y: None
+                height: dp(80)
+            BoxLayout:
+                size_hint_y: None
+                height: dp(46)
+                spacing: dp(8)
+                Btn:
+                    text: "Save as style rule"
+                    on_release: app.add_mem("pref", note_in.text)
+                Btn:
+                    text: "Save as note"
+                    on_release: app.add_mem("note", note_in.text)
+            ScrollView:
+                Body:
+                    text: app.mem_text
+            BoxLayout:
+                size_hint_y: None
+                height: dp(46)
+                spacing: dp(8)
+                TextInput:
+                    id: del_in
+                    hint_text: "id to forget"
+                    multiline: False
+                    input_filter: "int"
+                Btn:
+                    text: "Forget"
+                    size_hint_x: None
+                    width: dp(90)
+                    on_release: app.forget(del_in.text)
+            Btn:
+                text: "Back"
+                on_release: app.go("home")

@@ -1,0 +1,11 @@
+{
+  "id": "org.x.assistant.bridge",
+  "name": "X Bridge",
+  "main": "main.js",
+  "version": "1.0.0",
+  "readme": "readme.md",
+  "icon": "icon.png",
+  "files": [],
+  "minVersionCode": 290,
+  "author": { "name": "X" }
+}
